@@ -1,16 +1,29 @@
 import openai
+from elevenlabs.client import ElevenLabs
+from elevenlabs import Voice, VoiceSettings, save
 import os
 from dotenv import load_dotenv
 
 # Load the .env file
 load_dotenv()
 
+# Set api keys
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ELEVEN_LABS_API_KEY = os.getenv("ELEVEN_LABS_API_KEY")
+
+# Set voice ids for the characters
+ANDREW_TATE_VOICE_ID = os.getenv("ANDREW_TATE_VOICE_ID")
+HOMELANDER_VOICE_ID = os.getenv("HOMELANDER_VOICE_ID")
+PETER_GRIFFIN_VOICE_ID = os.getenv("PETER_GRIFFIN_VOICE_ID")
+SPONGEBOB_VOICE_ID = os.getenv("SPONGEBOB_VOICE_ID")
+
+# Get the brainrot words from the txt file
 brainrot_words = open("brainrot_words.txt", "r").read().split("\n")
 
 # Set the API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = OPENAI_API_KEY
 
-# Function to generate questions based on the topic
+# Function to generate questions based on the topic using OpenAI's GPT-4o model
 def get_questions(topic):
     response = openai.chat.completions.create(
         model="gpt-4o", # Using the GPT-4o model
@@ -30,7 +43,7 @@ def get_questions(topic):
 
     return response.choices[0].message.content
 
-# Function to generate a script using the questions and character
+# Function to generate a script using the questions and character using OpenAI's GPT-4o model
 def get_script(questions, character):
     response = openai.chat.completions.create(
         model="gpt-4o" , # Using the GPT-4o model
@@ -67,3 +80,54 @@ def get_script(questions, character):
 
     return response.choices[0].message.content
 
+# Function to generate ai voice over with the script using Eleven Labs API
+def get_voiceover(script, character):
+    # Create a client object with the API key
+    client = ElevenLabs(
+        api_key=ELEVEN_LABS_API_KEY
+    ) 
+
+    print(script)
+
+    # Define voice settings
+    voice_id = ""
+    stability = 0
+    similarity_boost = 0
+    style = 0
+
+    # Set the voice id, stability, similarity boost, and style based on the character
+    if character == "Andrew Tate":
+        voice_id = ANDREW_TATE_VOICE_ID
+        stability = 0.65
+        similarity_boost = 0.9
+        style = 0.1
+    elif character == "Homelander":
+        voice_id = HOMELANDER_VOICE_ID
+        stability = 0.5
+        similarity_boost = 0.75
+        style = 0.01
+    elif character == "Peter Griffin":
+        voice_id = PETER_GRIFFIN_VOICE_ID
+        stability = 0.6
+        similarity_boost = 0.9
+        style = 0.1
+    elif character == "Spongebob":
+        voice_id = SPONGEBOB_VOICE_ID
+        stability = 0.7
+        similarity_boost = 0.5
+        style = 0.25
+
+    # Generate the voiceover
+    audio = client.generate(
+        text=script, # Using the script to generate the voiceover
+        voice=Voice( # Using the voice settings
+            voice_id=voice_id,
+            settings = VoiceSettings(stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
+        ),
+        model="eleven_multilingual_v2" # Using the eleven_multilingual_v2 model
+    )
+
+    # Save the voiceover as voiceover.mp3
+    save(audio, "voiceover.mp3") 
+
+    return "Voiceover generated successfully"
