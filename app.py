@@ -57,7 +57,7 @@ def split_voiceover():
 
 @api.route('/video', methods=['GET'])
 def create_video():
-    response = services.create_video(questions) # Call create_video function to create video
+    response = services.create_video(questions, character) # Call create_video function to create video
 
     return jsonify(response), 200
 
