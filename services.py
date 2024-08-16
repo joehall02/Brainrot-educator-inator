@@ -61,7 +61,7 @@ def get_script(questions, character):
                 and answers to base the video around. Do not include mentions of the timer or 5 second pause. The quiz is not multichoice, 
                 do not give the viewer the option between the answer and something else. Do not give stage directions for the character or 
                 mention anything about an intro/outro, I only need the script to include what the character says. For each set of questions and 
-                answers, write ‘Question x’ and ‘The answer is z’ with x being the question number and z being the answer. After reading the brief intro, 
+                answers, write ‘Question x’ and ‘The answer is z’ with x being the question number and z being the answer. After reading the intro and  
                 reading each question and reading each answer, include '<breaktime="3s" />' to indicate a pause.              
                 """
             },
@@ -247,14 +247,14 @@ def add_labels_and_answers(questions, answer_start_times, video):
     # Add the labels and answers to the video
     for i, label in enumerate(labels):
         # Create the initial label clip
-        label_clip = TextClip(label, fontsize=50, color=label_colours[i]).set_duration(video.duration).set_position(('left', 50 + i * 50)) 
+        label_clip = TextClip(label, fontsize=50, color=label_colours[i], stroke_color=label_colours[i], stroke_width=2).set_duration(video.duration).set_position(('left', 50 + i * 75))  
 
         # Add the label clip to the list of label clips
         label_clips.append(label_clip)
 
         # Create the answer clip with the label and answer combined
         answer_text = label_answer_map[label]
-        answer_clip = TextClip(label + answer_text, fontsize=50, color=label_colours[i]).set_start(answer_start_times[i]).set_duration(video.duration - answer_start_times[i]).set_position(('left', 50 + i * 50))
+        answer_clip = TextClip(label + answer_text, fontsize=50, color=label_colours[i], stroke_color=label_colours[i], stroke_width=2).set_start(answer_start_times[i]).set_duration(video.duration - answer_start_times[i]).set_position(('left', 50 + i * 75))
 
         # Add the answer clip to the list of label clips
         label_clips.append(answer_clip)
@@ -282,13 +282,16 @@ def create_video(questions, character):
     video = background_video.set_audio(final_audio_with_music)
 
     # Create the countdown bar video clips
-    countdown_bar = VideoFileClip("video_files/countdown_bar.mov")
+    countdown_bar = VideoFileClip("video_files/countdown_bar.mov", has_mask=True) # has_mask=True is used to remove the black background
     countdown1_bar = countdown_bar.set_start(countdown_start_times[0]).set_position(('center', 'center'))
     countdown2_bar = countdown_bar.set_start(countdown_start_times[1]).set_position(('center', 'center'))
     countdown3_bar = countdown_bar.set_start(countdown_start_times[2]).set_position(('center', 'center'))
 
     # Add labels and answers to the video
     label_clips = add_labels_and_answers(questions, answer_start_times, video)
+
+    # Add follow animation to the video, only plays in the last 3 seconds of the video
+    follow_animation = VideoFileClip("video_files/follow_animation.mov", has_mask=True).set_start(video.duration - 3).set_position(('center', 'center'))
 
     # Add character image to the video
     if character == "Andrew Tate":
@@ -304,7 +307,7 @@ def create_video(questions, character):
     character_clip = ImageClip(character_image).set_duration(video.duration).set_position(('left', 'bottom'))
 
     # Composite the video with the character clip, label clips, and answer clips
-    final_video = CompositeVideoClip([video, character_clip, countdown1_bar, countdown2_bar, countdown3_bar] + label_clips)
+    final_video = CompositeVideoClip([video, character_clip, countdown1_bar, countdown2_bar, countdown3_bar, follow_animation] + label_clips)
 
     # Save the final video
     final_video.write_videofile("final_video.mp4", codec="libx264", audio_codec="aac")

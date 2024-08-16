@@ -8,7 +8,6 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 # Global variables
 questions = ""
-script = ""
 character = ""
 
 @api.route('/questions', methods=['POST'])
@@ -25,7 +24,7 @@ def generate_questions():
 
 @api.route('/script', methods=['POST'])
 def generate_script():
-    global script, character # Access the global variable
+    global character # Access the global variable
 
     request_data = request.get_json() # Get the request data
 
@@ -39,8 +38,12 @@ def generate_script():
 
     return jsonify(script), 200
 
-@api.route('/voiceover', methods=['GET'])
+@api.route('/voiceover', methods=['POST'])
 def generate_voiceover():
+    request_data = request.get_json() # Get the request data
+
+    script = request_data['script'] # Get the script
+
     response = services.get_voiceover(script, character) # Call get_voiceover function to generate voiceover using script
 
     return jsonify(response), 200
@@ -66,7 +69,6 @@ def reset():
     global questions, script, character
 
     questions = ""
-    script = ""
     character = ""
 
     return jsonify("Reset successful"), 200
