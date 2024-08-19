@@ -199,12 +199,12 @@ def get_audio_clips():
     background_music = AudioFileClip("video_files/audio/music.mp3")
 
     # Calculate the start times for each audio clip
-    q1_start = intro_audio.duration + 1 # Add 1 second to stop audio overlap
+    q1_start = intro_audio.duration
     countdown1_start = q1_start + q1_audio.duration
     a1_start = countdown1_start + countdown_audio.duration
     q2_start = a1_start + a1_audio.duration
-    countdown2_start = q2_start + q2_audio.duration
-    a2_start = countdown2_start + countdown_audio.duration
+    countdown2_start = q2_start + q2_audio.duration 
+    a2_start = countdown2_start + countdown_audio.duration 
     q3_start = a2_start + a2_audio.duration
     countdown3_start = q3_start + q3_audio.duration
     a3_start = countdown3_start + countdown_audio.duration
@@ -292,6 +292,7 @@ def create_video(questions, character):
 
     # Add follow animation to the video, only plays in the last 3 seconds of the video
     follow_animation = VideoFileClip("video_files/follow_animation.mov", has_mask=True).set_start(video.duration - 3).set_position(('center', 'center'))
+    follow_animation.resize(width=550) # Resize the follow animation by half
 
     # Add character image to the video
     if character == "Andrew Tate":
@@ -303,11 +304,20 @@ def create_video(questions, character):
     elif character == "Spongebob":
         character_image = "video_files/characters/spongebob.png"
     
-    # Load the character image and set the duration and position
-    character_clip = ImageClip(character_image).set_duration(video.duration).set_position(('left', 'bottom'))
+    # Load the character image and set the position to the bottom left
+    character_clip = ImageClip(character_image).set_position(('left', 'bottom'))
+
+    character_clips = []
+    previous_end = 0
+    
+    # Split the character clip into sections based on the countdown start times
+    for start_time in countdown_start_times:
+        character_clips.append(character_clip.set_start(previous_end).set_duration(start_time - previous_end))
+        previous_end = start_time + countdown_bar.duration
+    character_clips.append(character_clip.set_start(previous_end).set_duration(video.duration - previous_end)) # Add the last section of the character clip
 
     # Composite the video with the character clip, label clips, and answer clips
-    final_video = CompositeVideoClip([video, character_clip, countdown1_bar, countdown2_bar, countdown3_bar, follow_animation] + label_clips)
+    final_video = CompositeVideoClip([video, countdown1_bar, countdown2_bar, countdown3_bar, follow_animation] + label_clips + character_clips)
 
     # Save the final video
     final_video.write_videofile("final_video.mp4", codec="libx264", audio_codec="aac")
