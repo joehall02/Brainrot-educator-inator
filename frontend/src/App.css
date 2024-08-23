@@ -1,0 +1,4 @@
+.animated-background {
+    background: rgb(154,7,142);
+    background: linear-gradient(42deg, rgba(154,7,142,1) 0%, rgba(0,136,255,1) 100%);
+}

@@ -58,6 +58,7 @@ export const generateVoiceover = async (script) => {
   }
 };
 
+// Function to split the voiceover into smaller audio clips
 export const splitVoiceover = async (timestamps) => {
   try {
     const response = await fetch("/api/timestamps", {
@@ -76,3 +77,10 @@ export const splitVoiceover = async (timestamps) => {
     console.error(error);
   }
 };
+
+// Function to generate the video
+// export const generateVideo = async () => {
+//   try {
+//     const response = await fetch("api/video")
+//   }
+// }

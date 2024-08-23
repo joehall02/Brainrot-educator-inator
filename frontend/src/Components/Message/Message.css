@@ -1,0 +1,33 @@
+
+/* Style for the user message */
+.user-message {
+    background-color: #A5A8AF;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 1em;
+    color: #000;
+}
+
+/* Styles for the chatbot message */
+.chatbot-message {
+    background-color: #007bff;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 1em;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .user-message,
+    .chatbot-message {
+        font-size: 0.8em;
+    }
+}
