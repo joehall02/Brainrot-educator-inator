@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./Message.css";
-import { generateScript } from "../../apiServices";
 
 const CharacterMessage = ({ handleCharacterSelection }) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -14,7 +13,7 @@ const CharacterMessage = ({ handleCharacterSelection }) => {
     <div>
       <div className="d-flex justify-content-start">
         <div className="chatbot-message text-white">
-          <p>Choose a character</p>
+          <p className="fw-bold">Choose a character</p>
           <div className="d-flex flex-column w-100">
             <button className="btn btn px-4 my-1 flex-grow-1 border-white text-white btn-secondary" onClick={() => handleButtonPress("Spongebob")} disabled={isDisabled}>
               Spongebob

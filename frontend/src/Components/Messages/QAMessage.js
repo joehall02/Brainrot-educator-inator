@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Message.css";
 import { generateQuestions } from "../../apiServices";
 
-const QAMessage = ({ topic, scrollToBottom, handleQAButtonPress }) => {
+const QAMessage = ({ topic, scrollToBottom, handleQAButtonPress, messageCount, setMessageCount }) => {
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]); // Array of questions and answers
   const [isLoading, setIsLoading] = useState(true); // State to store loading status
   const [isButtonDisabled, setIsButtonDisabled] = useState(false); // State to store button disabled status
@@ -33,6 +33,10 @@ const QAMessage = ({ topic, scrollToBottom, handleQAButtonPress }) => {
   // Scroll to the bottom of the chat window when the component updates
   useEffect(() => {
     scrollToBottom();
+    if (questions[0] === "Please provide a topic for the questions.") {
+      // If the topic is invalid, decrement the message count
+      setMessageCount(messageCount - 1);
+    }
   }, [isLoading]);
 
   // Separate the questions and answers from the fetched data, check if the data is an array before filtering, if not, set questions and answers to empty arrays
@@ -50,7 +54,7 @@ const QAMessage = ({ topic, scrollToBottom, handleQAButtonPress }) => {
           <p>Please provide a topic for the questions.</p>
         ) : questions.length > 0 ? (
           <>
-            <p>Are you happy with the following questions and answers?:</p>
+            <p className="fw-bold">Are you happy with the following questions and answers?:</p>
             {questions.map((question, index) => (
               <div key={index}>
                 <p>{question}</p>
@@ -58,10 +62,10 @@ const QAMessage = ({ topic, scrollToBottom, handleQAButtonPress }) => {
               </div>
             ))}
             <div className="d-flex w-100">
-              <button className="btn btn px-4 flex-grow-1 border-white text-white btn-secondary me-2" onClick={() => handleButtonPress("Yes")} disabled={isButtonDisabled}>
+              <button className="btn px-4 flex-grow-1 border-white text-white btn-secondary me-2" onClick={() => handleButtonPress("Yes")} disabled={isButtonDisabled}>
                 Yes
               </button>
-              <button className="btn btn px-4 flex-grow-1 border-white text-white btn-danger" onClick={() => handleButtonPress("No")} disabled={isButtonDisabled}>
+              <button className="btn px-4 flex-grow-1 border-white text-white btn-danger" onClick={() => handleButtonPress("No")} disabled={isButtonDisabled}>
                 No
               </button>
             </div>

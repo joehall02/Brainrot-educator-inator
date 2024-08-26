@@ -49,13 +49,26 @@ const Chatbot = () => {
       setMessageCount(messageCount + 1);
     } else if (response === "No") {
       // If the response is No, create new questions
-      handleChatbotResponse({ topic: messages[2].text });
+      const lastUserMessage = messages
+        .slice() // Copy the messages array
+        .reverse() // Reverse the copied array so the last messages are first
+        .find((message) => message.isUser); // Find the first message with an isUser value of true
+
+      // If a user message is found, call the handleChatbotResponse function with the topic
+      if (lastUserMessage) {
+        handleChatbotResponse({ topic: lastUserMessage.text });
+      }
     }
   };
 
   // Function to handle the character selection
   const handleCharacterSelection = (character) => {
-    console.log(character);
+    setMessages([...messages, { isUser: true, text: character }]); // Add the character selection to the messages
+    setMessageCount(messageCount + 1); // Increment the message count
+  };
+
+  const handleSciptButtonPress = (response) => {
+    console.log(response);
   };
 
   // Function to scroll to the bottom of the chat
@@ -74,6 +87,8 @@ const Chatbot = () => {
       handleChatbotResponse({ topic: messages[messages.length - 1].text }); // Sends QA message with the topic
     } else if (messageCount === 2) {
       handleChatbotResponse({ handleCharacterSelection: handleCharacterSelection }); // Sends character selection message
+    } else if (messageCount === 3) {
+      handleChatbotResponse({ character: messages[messages.length - 1].text, handleSciptButtonPress: handleSciptButtonPress }); // Sends script message
     }
   }, [messageCount]);
 
@@ -95,9 +110,20 @@ const Chatbot = () => {
               if (message.isUser !== undefined) {
                 return <Message key={index} isUser={message.isUser} text={message.text} />;
               } else if (message.topic !== undefined) {
-                return <QAMessage key={index} topic={message.topic} scrollToBottom={scrollToBottom} handleQAButtonPress={handleQAButtonPress} />; // scrollToBottom prop is passed to QAMessage for when questions are fetched
+                return (
+                  <QAMessage
+                    key={index}
+                    topic={message.topic}
+                    scrollToBottom={scrollToBottom}
+                    handleQAButtonPress={handleQAButtonPress}
+                    messageCount={messageCount}
+                    setMessageCount={setMessageCount}
+                  />
+                ); // scrollToBottom prop is passed to QAMessage for when questions are fetched
               } else if (message.handleCharacterSelection !== undefined) {
-                return <CharacterMessage key={index} handleCharacterSelection={message.handleCharacterSelection} />;
+                return <CharacterMessage key={index} handleCharacterSelection={handleCharacterSelection} />;
+              } else if (message.handleSciptButtonPress !== undefined) {
+                return <ScriptMessage key={index} character={message.character} handleSciptButtonPress={handleSciptButtonPress} scrollToBottom={scrollToBottom} />;
               }
             })}
             {/* <CharacterMessage /> */}
@@ -113,6 +139,7 @@ const Chatbot = () => {
               placeholder="Type your response here"
               style={{ backgroundColor: "#808080" }}
               value={input}
+              disabled={messageCount > 0} // Disables the input after the topic is provided
               onChange={handleInputChange}
               onKeyDown={handleSendMessage}
             />
