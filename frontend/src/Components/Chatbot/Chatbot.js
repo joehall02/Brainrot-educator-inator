@@ -67,8 +67,23 @@ const Chatbot = () => {
     setMessageCount(messageCount + 1); // Increment the message count
   };
 
+  // Function to handle the script button presses for yes and no (edit handled in component)
   const handleSciptButtonPress = (response) => {
-    console.log(response);
+    if (response === "Yes") {
+      setMessageCount(messageCount + 1); // Increment the message count
+    } else if (response === "No") {
+      console.log("No");
+      // If the response is No, create a new script
+      const lastUserMessage = messages
+        .slice() // Copy the messages array
+        .reverse() // Reverse the copied array so the last messages are first
+        .find((message) => message.isUser); // Find the first message with an isUser value of true
+
+      // If a user message is found, call the handleChatbotResponse function with the character
+      if (lastUserMessage) {
+        handleChatbotResponse({ character: lastUserMessage.text, handleSciptButtonPress: handleSciptButtonPress });
+      }
+    }
   };
 
   // Function to scroll to the bottom of the chat
@@ -88,7 +103,9 @@ const Chatbot = () => {
     } else if (messageCount === 2) {
       handleChatbotResponse({ handleCharacterSelection: handleCharacterSelection }); // Sends character selection message
     } else if (messageCount === 3) {
-      handleChatbotResponse({ character: messages[messages.length - 1].text, handleSciptButtonPress: handleSciptButtonPress }); // Sends script message
+      handleChatbotResponse({ character: messages[messages.length - 1].text, handleSciptButtonPress: handleSciptButtonPress }); // Sends script message with the character
+    } else if (messageCount === 4) {
+      handleChatbotResponse({ script: messages[messages.length - 1].text }); // Sends voiceover message with the script
     }
   }, [messageCount]);
 
@@ -105,7 +122,8 @@ const Chatbot = () => {
 
           {/* Messages */}
           <div className="overflow-auto">
-            {/* Maps the messages and checks if the message is a user message, QAMessage, CharacterMessage or chatbot message */}
+            {/* Maps the messages and checks if the message is a user message, QAMessage, 
+            CharacterMessage, ScriptMessage, SplitVoiceoverMessage or chatbot message */}
             {messages.map((message, index) => {
               if (message.isUser !== undefined) {
                 return <Message key={index} isUser={message.isUser} text={message.text} />;
@@ -124,8 +142,11 @@ const Chatbot = () => {
                 return <CharacterMessage key={index} handleCharacterSelection={handleCharacterSelection} />;
               } else if (message.handleSciptButtonPress !== undefined) {
                 return <ScriptMessage key={index} character={message.character} handleSciptButtonPress={handleSciptButtonPress} scrollToBottom={scrollToBottom} />;
+              } else if (message.script !== undefined) {
+                return <TimestampMessage key={index} script={message.script} />;
               }
             })}
+            <TimestampMessage />
             {/* <CharacterMessage /> */}
             {/* Reference for the bottom of the messages */}
             <div ref={messagesEndRef} />

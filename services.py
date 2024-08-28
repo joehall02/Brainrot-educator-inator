@@ -130,7 +130,7 @@ def get_voiceover(script, character):
     )
 
     # Save the voiceover as voiceover.mp3 in the video_files folder
-    save(audio, "video_files/voiceover.mp3") 
+    save(audio, "video_files/audio/voiceover.mp3") 
 
     return "Voiceover generated successfully"
 
@@ -142,7 +142,7 @@ def parse_timestamp(timestamp):
 # Function to split the voiceover into subclips using the timestamps
 def split_voiceover(timestamps):
     # Load the voiceover
-    voiceover = AudioFileClip("video_files/voiceover.mp3")
+    voiceover = AudioFileClip("video_files/audio/voiceover.mp3")
 
     # Parse the timestamps into seconds
     intro_start = 0

@@ -1,5 +1,6 @@
-from flask import Flask, Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify, send_from_directory
 import services
+import os
 
 app = Flask(__name__)
 
@@ -63,6 +64,10 @@ def create_video():
     response = services.create_video(questions, character) # Call create_video function to create video
 
     return jsonify(response), 200
+
+@api.route('/audio_files/<path:filename>')
+def serve_audio_files(filename):
+    return send_from_directory(os.path.join(app.root_path, 'video_files/audio'), filename)
 
 @api.route('/reset', methods=['GET'])
 def reset():
