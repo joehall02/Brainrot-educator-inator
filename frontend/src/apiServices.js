@@ -66,7 +66,7 @@ export const splitVoiceover = async (timestamps) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ timestamps }),
+      body: JSON.stringify(timestamps), // Send the timestamps directly at the top level
     });
     if (!response.ok) {
       throw new Error("Failed to split voiceover");

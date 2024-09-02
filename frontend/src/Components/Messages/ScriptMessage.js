@@ -16,7 +16,7 @@ const ScriptMessage = ({ character, handleSciptButtonPress, scrollToBottom }) =>
     } else if (response === "Done") {
       setIsEditing(false); // Set editing status to false
     } else {
-      handleSciptButtonPress(response); // Call the handleSciptButtonPress function passed in as a prop with the response
+      handleSciptButtonPress(response, script); // Call the handleSciptButtonPress function passed in as a prop with the response
       setIsButtonDisabled(true); // Disable the buttons
     }
   };

@@ -17,6 +17,7 @@ const Chatbot = () => {
 
   const [input, setInput] = useState(""); // State to store the input value
   const [messageCount, setMessageCount] = useState(0); // State to store the message count
+  const [script, setScript] = useState(""); // State to store the script
   const messagesEndRef = useRef(null); // Reference to the last message element
 
   // Function to handle the input change
@@ -68,9 +69,11 @@ const Chatbot = () => {
   };
 
   // Function to handle the script button presses for yes and no (edit handled in component)
-  const handleSciptButtonPress = (response) => {
+  const handleSciptButtonPress = (response, script) => {
     if (response === "Yes") {
       setMessageCount(messageCount + 1); // Increment the message count
+      setScript(script); // Set the script to the passed in from the component
+      console.log(messages);
     } else if (response === "No") {
       console.log("No");
       // If the response is No, create a new script
@@ -84,6 +87,11 @@ const Chatbot = () => {
         handleChatbotResponse({ character: lastUserMessage.text, handleSciptButtonPress: handleSciptButtonPress });
       }
     }
+  };
+
+  // Function to handle the timestamp message button press
+  const handleTimestampButtonPress = () => {
+    console.log("Timestamp button pressed");
   };
 
   // Function to scroll to the bottom of the chat
@@ -105,7 +113,7 @@ const Chatbot = () => {
     } else if (messageCount === 3) {
       handleChatbotResponse({ character: messages[messages.length - 1].text, handleSciptButtonPress: handleSciptButtonPress }); // Sends script message with the character
     } else if (messageCount === 4) {
-      handleChatbotResponse({ script: messages[messages.length - 1].text }); // Sends voiceover message with the script
+      handleChatbotResponse({ script: script, handleTimestampButtonPress: handleTimestampButtonPress }); // Sends voiceover message with the script
     }
   }, [messageCount]);
 
@@ -143,10 +151,9 @@ const Chatbot = () => {
               } else if (message.handleSciptButtonPress !== undefined) {
                 return <ScriptMessage key={index} character={message.character} handleSciptButtonPress={handleSciptButtonPress} scrollToBottom={scrollToBottom} />;
               } else if (message.script !== undefined) {
-                return <TimestampMessage key={index} script={message.script} />;
+                return <TimestampMessage key={index} script={message.script} handleTimestampButtonPress={handleTimestampButtonPress} scrollToBottom={scrollToBottom} />;
               }
             })}
-            <TimestampMessage />
             {/* <CharacterMessage /> */}
             {/* Reference for the bottom of the messages */}
             <div ref={messagesEndRef} />
