@@ -79,8 +79,17 @@ export const splitVoiceover = async (timestamps) => {
 };
 
 // Function to generate the video
-// export const generateVideo = async () => {
-//   try {
-//     const response = await fetch("api/video")
-//   }
-// }
+export const generateVideo = async () => {
+  try {
+    const response = await fetch("api/video", {
+      method: "GET",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to generate video");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};

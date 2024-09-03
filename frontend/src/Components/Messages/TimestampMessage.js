@@ -3,14 +3,13 @@ import "./Message.css";
 import { generateVoiceover, splitVoiceover } from "../../apiServices";
 
 const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const audioFilePath = "/api/audio_files/voiceover.mp3";
 
   // Function to handle the button press
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     setIsButtonDisabled(true); // Disable the button
-    handleTimestampButtonPress(); // Call the handleTimestampButtonPress function passed in as a prop
 
     // Get the timestamps from the input fields
     const introEnd = document.getElementById("intro-end").value;
@@ -45,20 +44,28 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
       A3E: a3End,
       OutroS: outroStart,
     };
-    // Call the splitVoiceover function with the timestamps
-    console.log(timestamps);
 
-    splitVoiceover(timestamps);
+    // Call the splitVoiceover function with the timestamps
+    await splitVoiceover(timestamps);
+
+    // Call the handleTimestampButtonPress function passed in as a prop
+    handleTimestampButtonPress();
   };
 
   // Generate the voiceover when the component mounts
   useEffect(() => {
     const fetchVoiceover = async () => {
-      try {
-        await generateVoiceover(script); // Call api to generate voiceover
-      } catch (error) {
-        console.error("Error generating voiceover:", error);
-      } finally {
+      // If the script is passed in, generate the voiceover
+      if (script && script !== "") {
+        try {
+          await generateVoiceover(script); // Call api to generate voiceover
+        } catch (error) {
+          console.error("Error generating voiceover:", error);
+        } finally {
+          setIsLoading(false); // Set loading status to false
+        }
+      } else {
+        // If the script is not passed in, set loading status to false
         setIsLoading(false); // Set loading status to false
       }
     };
@@ -216,7 +223,7 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
               </div>
 
               {/* Button to submit the timestamps */}
-              <button className="btn px-4 border-white text-white btn-secondary w-100" onClick={() => handleButtonPress()}>
+              <button className="btn px-4 border-white text-white btn-secondary w-100" onClick={() => handleButtonPress()} disabled={isButtonDisabled}>
                 Submit
               </button>
             </>

@@ -6,7 +6,7 @@ import QAMessage from "../Messages/QAMessage";
 import ScriptMessage from "../Messages/ScriptMessage";
 import TimestampMessage from "../Messages/TimestampMessage";
 import SplitVoiceoverMessage from "../Messages/SplitVoiceoverMessage";
-import { generateScript, generateVoiceover, splitVoiceover } from "../../apiServices";
+import { generateVideo } from "../../apiServices";
 
 const Chatbot = () => {
   // Array of messages, adding the initial messages
@@ -73,9 +73,7 @@ const Chatbot = () => {
     if (response === "Yes") {
       setMessageCount(messageCount + 1); // Increment the message count
       setScript(script); // Set the script to the passed in from the component
-      console.log(messages);
     } else if (response === "No") {
-      console.log("No");
       // If the response is No, create a new script
       const lastUserMessage = messages
         .slice() // Copy the messages array
@@ -91,7 +89,19 @@ const Chatbot = () => {
 
   // Function to handle the timestamp message button press
   const handleTimestampButtonPress = () => {
-    console.log("Timestamp button pressed");
+    setMessageCount(messageCount + 1); // Increment the message count
+    setScript(""); // Reset the script so that it is not passed to the next timestamp component if there is one
+  };
+
+  // Function to handle the split voiceover button press
+  const handleSplitVoiceoverButtonPress = async (response) => {
+    if (response === "Yes") {
+      handleChatbotResponse({ isUser: false, text: "Creating voiceover..." }); // Add a message confirming the video is being created
+      await generateVideo(); // Call the generateVideo function
+      handleChatbotResponse({ isUser: false, text: "Voiceover created!" }); // Add a message confirming the video has been created
+    } else if (response === "No") {
+      setMessageCount(messageCount - 1); // Decrement the message count to go back to the timestamp message
+    }
   };
 
   // Function to scroll to the bottom of the chat
@@ -114,6 +124,8 @@ const Chatbot = () => {
       handleChatbotResponse({ character: messages[messages.length - 1].text, handleSciptButtonPress: handleSciptButtonPress }); // Sends script message with the character
     } else if (messageCount === 4) {
       handleChatbotResponse({ script: script, handleTimestampButtonPress: handleTimestampButtonPress }); // Sends voiceover message with the script
+    } else if (messageCount === 5) {
+      handleChatbotResponse({ handleSplitVoiceoverButtonPress: handleSplitVoiceoverButtonPress }); // Sends split voiceover message
     }
   }, [messageCount]);
 
@@ -152,9 +164,10 @@ const Chatbot = () => {
                 return <ScriptMessage key={index} character={message.character} handleSciptButtonPress={handleSciptButtonPress} scrollToBottom={scrollToBottom} />;
               } else if (message.script !== undefined) {
                 return <TimestampMessage key={index} script={message.script} handleTimestampButtonPress={handleTimestampButtonPress} scrollToBottom={scrollToBottom} />;
+              } else if (message.handleSplitVoiceoverButtonPress !== undefined) {
+                return <SplitVoiceoverMessage key={index} handleSplitVoiceoverButtonPress={handleSplitVoiceoverButtonPress} />;
               }
             })}
-            {/* <CharacterMessage /> */}
             {/* Reference for the bottom of the messages */}
             <div ref={messagesEndRef} />
           </div>
