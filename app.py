@@ -69,6 +69,10 @@ def create_video():
 def serve_audio_files(filename):
     return send_from_directory(os.path.join(app.root_path, 'video_files/audio'), filename)
 
+@api.route('/video_files/<path:filename>')
+def serve_video_files(filename):
+    return send_from_directory(os.path.join(app.root_path, 'video_files'), filename)
+
 @api.route('/reset', methods=['GET'])
 def reset():
     global questions, script, character

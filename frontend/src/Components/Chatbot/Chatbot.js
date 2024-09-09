@@ -6,7 +6,7 @@ import QAMessage from "../Messages/QAMessage";
 import ScriptMessage from "../Messages/ScriptMessage";
 import TimestampMessage from "../Messages/TimestampMessage";
 import SplitVoiceoverMessage from "../Messages/SplitVoiceoverMessage";
-import { generateVideo } from "../../apiServices";
+import VideoMessage from "../Messages/VideoMessage";
 
 const Chatbot = () => {
   // Array of messages, adding the initial messages
@@ -18,6 +18,7 @@ const Chatbot = () => {
   const [input, setInput] = useState(""); // State to store the input value
   const [messageCount, setMessageCount] = useState(0); // State to store the message count
   const [script, setScript] = useState(""); // State to store the script
+  const videoPath = "/api/video_files/final_video.mp4"; // Video path
   const messagesEndRef = useRef(null); // Reference to the last message element
 
   // Function to handle the input change
@@ -96,9 +97,7 @@ const Chatbot = () => {
   // Function to handle the split voiceover button press
   const handleSplitVoiceoverButtonPress = async (response) => {
     if (response === "Yes") {
-      handleChatbotResponse({ isUser: false, text: "Creating voiceover..." }); // Add a message confirming the video is being created
-      await generateVideo(); // Call the generateVideo function
-      handleChatbotResponse({ isUser: false, text: "Voiceover created!" }); // Add a message confirming the video has been created
+      setMessageCount(messageCount + 1); // Increment the message count
     } else if (response === "No") {
       setMessageCount(messageCount - 1); // Decrement the message count to go back to the timestamp message
     }
@@ -126,6 +125,8 @@ const Chatbot = () => {
       handleChatbotResponse({ script: script, handleTimestampButtonPress: handleTimestampButtonPress }); // Sends voiceover message with the script
     } else if (messageCount === 5) {
       handleChatbotResponse({ handleSplitVoiceoverButtonPress: handleSplitVoiceoverButtonPress }); // Sends split voiceover message
+    } else if (messageCount === 6) {
+      handleChatbotResponse({ videoPath: videoPath, scrollToBottom: scrollToBottom }); // Sends video message
     }
   }, [messageCount]);
 
@@ -166,6 +167,8 @@ const Chatbot = () => {
                 return <TimestampMessage key={index} script={message.script} handleTimestampButtonPress={handleTimestampButtonPress} scrollToBottom={scrollToBottom} />;
               } else if (message.handleSplitVoiceoverButtonPress !== undefined) {
                 return <SplitVoiceoverMessage key={index} handleSplitVoiceoverButtonPress={handleSplitVoiceoverButtonPress} />;
+              } else if (message.videoPath !== undefined) {
+                return <VideoMessage key={index} videoPath={message.videoPath} scrollToBottom={scrollToBottom} />;
               }
             })}
             {/* Reference for the bottom of the messages */}

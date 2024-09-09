@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Message.css";
 import { generateVoiceover, splitVoiceover } from "../../apiServices";
 
@@ -7,25 +7,41 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const audioFilePath = "/api/audio_files/voiceover.mp3";
 
+  // Refs for the input fields
+  const introEndRef = useRef(null);
+  const q1StartRef = useRef(null);
+  const q1EndRef = useRef(null);
+  const a1StartRef = useRef(null);
+  const a1EndRef = useRef(null);
+  const q2StartRef = useRef(null);
+  const q2EndRef = useRef(null);
+  const a2StartRef = useRef(null);
+  const a2EndRef = useRef(null);
+  const q3StartRef = useRef(null);
+  const q3EndRef = useRef(null);
+  const a3StartRef = useRef(null);
+  const a3EndRef = useRef(null);
+  const outroStartRef = useRef(null);
+
   // Function to handle the button press
   const handleButtonPress = async () => {
     setIsButtonDisabled(true); // Disable the button
 
     // Get the timestamps from the input fields
-    const introEnd = document.getElementById("intro-end").value;
-    const q1Start = document.getElementById("q1-start").value;
-    const q1End = document.getElementById("q1-end").value;
-    const a1Start = document.getElementById("a1-start").value;
-    const a1End = document.getElementById("a1-end").value;
-    const q2Start = document.getElementById("q2-start").value;
-    const q2End = document.getElementById("q2-end").value;
-    const a2Start = document.getElementById("a2-start").value;
-    const a2End = document.getElementById("a2-end").value;
-    const q3Start = document.getElementById("q3-start").value;
-    const q3End = document.getElementById("q3-end").value;
-    const a3Start = document.getElementById("a3-start").value;
-    const a3End = document.getElementById("a3-end").value;
-    const outroStart = document.getElementById("outro-start").value;
+    const introEnd = introEndRef.current.value;
+    const q1Start = q1StartRef.current.value;
+    const q1End = q1EndRef.current.value;
+    const a1Start = a1StartRef.current.value;
+    const a1End = a1EndRef.current.value;
+    const q2Start = q2StartRef.current.value;
+    const q2End = q2EndRef.current.value;
+    const a2Start = a2StartRef.current.value;
+    const a2End = a2EndRef.current.value;
+    const q3Start = q3StartRef.current.value;
+    const q3End = q3EndRef.current.value;
+    const a3Start = a3StartRef.current.value;
+    const a3End = a3EndRef.current.value;
+    const outroStart = outroStartRef.current.value;
 
     // Create an object with the timestamps
     const timestamps = {
@@ -99,7 +115,7 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                 <label htmlFor="intro-end" className="form-label">
                   End:
                 </label>
-                <input type="text" id="intro-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                <input type="text" id="intro-end" ref={introEndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
               </div>
 
               {/* Input for question 1 */}
@@ -112,13 +128,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="q1-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="q1-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q1-start" ref={q1StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="q1-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="q1-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q1-end" ref={q1EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                   <div className="d-flex align-items-center">
@@ -127,13 +143,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="a1-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="a1-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a1-start" ref={a1StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="a1-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="a1-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a1-end" ref={a1EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                 </div>
@@ -149,13 +165,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="q2-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="q2-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q2-start" ref={q2StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="q2-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="q2-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q2-end" ref={q2EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                   <div className="d-flex align-items-center">
@@ -164,13 +180,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="a2-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="a2-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a2-start" ref={a2StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="a2-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="a2-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a2-end" ref={a2EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                 </div>
@@ -186,13 +202,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="q3-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="q3-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q3-start" ref={q3StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="q3-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="q3-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="q3-end" ref={q3EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                   <div className="d-flex align-items-center">
@@ -201,13 +217,13 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                       <label htmlFor="a3-start" className="form-label">
                         Start:
                       </label>
-                      <input type="text" id="a3-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a3-start" ref={a3StartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                     <div>
                       <label htmlFor="a3-end" className="form-label">
                         End:
                       </label>
-                      <input type="text" id="a3-end" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                      <input type="text" id="a3-end" ref={a3EndRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
                     </div>
                   </div>
                 </div>
@@ -219,7 +235,7 @@ const TimestampMessage = ({ script, handleTimestampButtonPress, scrollToBottom }
                 <label htmlFor="intro-end" className="form-label">
                   Start:
                 </label>
-                <input type="text" id="outro-start" className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
+                <input type="text" id="outro-start" ref={outroStartRef} className="form-control" style={{ maxWidth: "60px" }} placeholder="0:00" />
               </div>
 
               {/* Button to submit the timestamps */}

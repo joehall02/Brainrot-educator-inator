@@ -320,6 +320,6 @@ def create_video(questions, character):
     final_video = CompositeVideoClip([video, countdown1_bar, countdown2_bar, countdown3_bar, follow_animation] + label_clips + character_clips)
 
     # Save the final video
-    final_video.write_videofile("final_video.mp4", codec="libx264", audio_codec="aac")
+    final_video.write_videofile("video_files/final_video.mp4", codec="libx264", audio_codec="aac")
 
     return "Video created successfully"
