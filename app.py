@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, send_from_directory
 import services
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend/build')
 
 # Create blueprint with a url prefix
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -82,8 +82,16 @@ def reset():
 
     return jsonify("Reset successful"), 200
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def static_proxy(path):
+    return send_from_directory(app.static_folder, path)
+
 # Register blueprint to the app
 app.register_blueprint(api)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000) # Run the app on port 5000
