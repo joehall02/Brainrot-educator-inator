@@ -19,16 +19,25 @@ RUN npm run build
 
 # Stage 2: Build the Python app
 # Use official Python image from the Docker Hub
-FROM python:3.12-slim AS build-backend
+FROM python:3.12.3 AS build-backend
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Install ImageMagick, ffmpeg, ghostscript, and fonts
+RUN apt-get update && apt-get install -y \
+    imagemagick \
+    ffmpeg \
+    ghostscript \
+    fonts-dejavu-core \
+    fonts-freefont-ttf \
+    && sed -i 's/<policy domain="path" rights="none" pattern="@\*"/<policy domain="path" rights="read|write" pattern="@\*"/' /etc/ImageMagick-6/policy.xml
 
 # Copy the dependencies file to the working directory
 COPY requirements.txt .
 
 # Install the dependancies
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
@@ -37,7 +46,7 @@ COPY . .
 COPY --from=build-frontend /app/frontend/build /app/frontend/build
 
 # Expose the port the app runs on
-EXPOSE 5000
+EXPOSE 5001
 
 # Run the application
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]

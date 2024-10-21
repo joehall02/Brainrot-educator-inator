@@ -22,7 +22,7 @@ moviepy==1.0.3
 numpy==2.0.1
 openai==1.40.1
 opencv-python==4.10.0.84
-pillow==10.4.0
+pillow==11.0.0
 proglog==0.1.10
 pydantic==2.8.2
 pydantic_core==2.20.1
