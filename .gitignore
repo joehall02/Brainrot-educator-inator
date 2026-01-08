@@ -4,6 +4,9 @@
 # Ignore __pycache__ directory
 __pycache__/
 
+# Ignore venv directory
+venv/
+
 # Ignore video_files directory
 video_files/
 
