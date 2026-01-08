@@ -29,6 +29,7 @@ The final video and intermediate audio files are written under `video_files/` an
   - Node.js 18+ and npm (for the React frontend)
   - Python 3.12+ (or compatible version) and `pip`
   - `ffmpeg` and ImageMagick installed (required for MoviePy video/audio processing)
+  - Docker (Optional)
 - **Assets**
   - `brainrot_words.txt` at the project root containing one brainrot word/phrase per line
   - Video/audio assets in `video_files/` (paths expected by `services.py`):
